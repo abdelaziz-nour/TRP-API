@@ -20,3 +20,11 @@ class Donation(models.Model):
     donation_amount = models.IntegerField()
     donation_time=models.DateTimeField('%Y-%m-%d ||%H:%M:%S',auto_now=True,)
 
+class userInfo(models.Model):
+    by_user=models.OneToOneField(User,on_delete=models.CASCADE)
+    fName=models.CharField(max_length=25,blank=False,null=False)
+    lName=models.CharField(max_length=25,blank=False,null=False)
+    education=models.TextField(max_length=100,blank=False,null=False)
+    email=models.EmailField(blank=True,null=True)
+    image=models.ImageField(blank=True,null=True)
+    description=models.TextField(max_length=250,blank=True,null=True)
