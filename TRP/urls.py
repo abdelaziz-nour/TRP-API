@@ -26,9 +26,15 @@ urlpatterns = [
     path('admin/', admin.site.urls),#admin site
     path('viewsets/', include(router.urls)),#Students who recevied the donations from the donors(users) (pass a token)
     path('donations/', views.Donation_mixins.as_view()),#donations made by users for the sudents (pass a token)
-                  #
-    path('user/', views.get_user),#getting user token by passing "username" "password" and get the token
+    path('mydonations/', views.get_user_donations),#history of my donations
+    path('recieved/', views.get_student_donations),#history of  donations student recieved
+                                                 #
     path('register/', views.register),# user registeration  by passing "username" "email" "first_name" "last_name" and get a token
+    #path('token/', views.get_token),#getting user token by passing "username" "password" 
+    path('user/', views.user),#getting user token by passing "username" "password" 
+    path('info/', views.get_user_info),# user registeration  by passing "username" "email" "first_name" "last_name" and get a token
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 
 ]
+
+ 
