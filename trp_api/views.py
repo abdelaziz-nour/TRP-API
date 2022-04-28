@@ -50,16 +50,27 @@ class Donation_mixins(ListCreateAPIView,):
 
             data.append(field)
         return Response(data)
+
     def post(self, request, *args, **kwargs):
         current_user= User.objects.get(id=request.user.id)
         donationAmount=request.data["donation_amout"],
-        student1 = Student.objects.get(id=request.data["studentID"])
-        print(current_user,student1,double(donationAmount))
-        donation = Donation(donor=current_user,donation_amount=double(donationAmount),student=student1)
+        student_old_edu_dues = Student.objects.get(id=request.data["studentID"]).student_education_dues
+        print(student_old_edu_dues)
+        studentobj = Student.objects.get(id=request.data["studentID"])
+        print(studentobj.id)
+        new_edu_dues=student_old_edu_dues-double(donationAmount)
+        if new_edu_dues <= 0:
+            return Response('Donations are more than student educations dues')
+        print(new_edu_dues)
+        studentobj.student_education_dues=new_edu_dues
+        print('D')
+        studentobj.save()
+        
+        donation = Donation(donor=current_user,donation_amount=double(donationAmount),student=studentobj)
         if donation:
             donation.save()
             return Response("Donation done successfully")
-        return Response("Donation done unsuccessfully")
+        return Response("Donation done unsuccessfully")       
 
 ############## Registration  & getting account informations ########################
 @authentication_classes([TokenAuthentication, BaseAuthentication, SessionAuthentication])
@@ -83,19 +94,6 @@ def register(request):
             token =Token.objects.create(user=user)
 
         return Response(token.key)
-
-#@authentication_classes([TokenAuthentication, BaseAuthentication, SessionAuthentication])
-#@permission_classes([AllowAny])
-#@api_view(['POST'])
-#def get_token(request):
-#    usre_name = request.data['username']
-#    password = request.data['password']
-#    user = authenticate(username=usre_name, password=password)
-#    if user is not None:
-#        token = Token.objects.get(user_id=user)
-#        return Response(token.key)
-#    else :
-#       return Response('Incorrect username or password')
 
 
 @api_view(['POST'])
@@ -152,13 +150,23 @@ def get_student_donations(request):
         return Response(data)
 
 
-@api_view(['POST'])
-@authentication_classes([TokenAuthentication, BaseAuthentication, SessionAuthentication])
-@permission_classes([IsAuthenticated])
-def user(request):
-    user= User.objects.get(id=request.user.id)
-    return Response(user.username) 
+#@api_view(['POST'])
+#@authentication_classes([TokenAuthentication, BaseAuthentication, SessionAuthentication])
+#@permission_classes([IsAuthenticated])
+#def user(request):
+#    user= User.objects.get(id=request.user.id)
+#    return Response(user.username) 
 
 
-
-
+#@authentication_classes([TokenAuthentication, BaseAuthentication, SessionAuthentication])
+#@permission_classes([AllowAny])
+#@api_view(['POST'])
+#def get_token(request):
+#    usre_name = request.data['username']
+#    password = request.data['password']
+#    user = authenticate(username=usre_name, password=password)
+#    if user is not None:
+#        token = Token.objects.get(user_id=user)
+#        return Response(token.key)
+#    else :
+#       return Response('Incorrect username or password')

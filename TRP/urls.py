@@ -31,7 +31,7 @@ urlpatterns = [
                                                  #
     path('register/', views.register),# user registeration  by passing "username" "email" "first_name" "last_name" and get a token
     #path('token/', views.get_token),#getting user token by passing "username" "password" 
-    path('user/', views.user),#getting user token by passing "username" "password" 
+    #path('user/', views.user),#getting user token by passing "username" "password" 
     path('info/', views.get_user_info),# user registeration  by passing "username" "email" "first_name" "last_name" and get a token
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 
