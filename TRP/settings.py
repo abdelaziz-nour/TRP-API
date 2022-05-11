@@ -25,12 +25,13 @@ SECRET_KEY = 'django-insecure-r^+-053d_m3_%&_t)8&sughx=!jaeq7t)scw6_#u6-k=)%jzv@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['vzzoz.pythonanywhere.com','127.0.0.1']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-    )
+    ),
+    'DATETIME_FORMAT': "%Y-%m-%dT%H:%M:%S"
 }
 
 

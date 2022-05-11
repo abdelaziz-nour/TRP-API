@@ -18,7 +18,7 @@ from rest_framework.authentication import SessionAuthentication,TokenAuthenticat
 # Create your views here.
 
 ############################# simple APIs ########################################
-class Student_Viewsets(viewsets.ModelViewSet): 
+class Student_Viewsets(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
@@ -40,7 +40,7 @@ class Donation_mixins(ListCreateAPIView,):
             student_id=student
             date = obj.donation_time
             field = {
-                
+
                 "id":donation_id,
                 "donor": donor_name.username,
                 "donation_amount":amount,
@@ -65,12 +65,12 @@ class Donation_mixins(ListCreateAPIView,):
         studentobj.student_education_dues=new_edu_dues
         print('D')
         studentobj.save()
-        
+
         donation = Donation(donor=current_user,donation_amount=double(donationAmount),student=studentobj)
         if donation:
             donation.save()
             return Response("Donation done successfully")
-        return Response("Donation done unsuccessfully")       
+        return Response("Donation done unsuccessfully")
 
 ############## Registration  & getting account informations ########################
 @authentication_classes([TokenAuthentication, BaseAuthentication, SessionAuthentication])
@@ -132,41 +132,53 @@ def get_user_donations(request):
             data.append(field)
         return Response(data)
 
-
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication, BaseAuthentication, SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def get_student_donations(request):
-    studentid=request.data['id']
-    if studentid is not None:
-        mydonations = Donation.objects.filter(student=studentid)
-        data =[]
-        for x in mydonations:
+    studentid = request.data['id']
+    mydonations = Donation.objects.filter(student=studentid)
+    student_edu= Student.objects.get(id=studentid)
+
+
+    if mydonations is not None:
+
+        if not mydonations:
+            data = []
             field = {
-                "donation_amount": x.donation_amount,
-                "donation_time": x.donation_time,
+                "donation_amount": 0,
+                "donation_time": 'None            ',
+                "Change": student_edu.student_education_dues,
             }
             data.append(field)
+        else:
+            data = []
+            for x in mydonations:
+                field = {
+                    "donation_amount": x.donation_amount,
+                    "donation_time": x.donation_time,
+                    "Change": student_edu.student_education_dues,
+                }
+                data.append(field)
         return Response(data)
-
 
 #@api_view(['POST'])
 #@authentication_classes([TokenAuthentication, BaseAuthentication, SessionAuthentication])
 #@permission_classes([IsAuthenticated])
 #def user(request):
 #    user= User.objects.get(id=request.user.id)
-#    return Response(user.username) 
+#    return Response(user.username)
 
 
-#@authentication_classes([TokenAuthentication, BaseAuthentication, SessionAuthentication])
-#@permission_classes([AllowAny])
-#@api_view(['POST'])
-#def get_token(request):
-#    usre_name = request.data['username']
-#    password = request.data['password']
-#    user = authenticate(username=usre_name, password=password)
-#    if user is not None:
-#        token = Token.objects.get(user_id=user)
-#        return Response(token.key)
-#    else :
-#       return Response('Incorrect username or password')
+@authentication_classes([TokenAuthentication, BaseAuthentication, SessionAuthentication])
+@permission_classes([AllowAny])
+@api_view(['POST'])
+def get_token(request):
+    usre_name = request.data['username']
+    password = request.data['password']
+    user = authenticate(username=usre_name, password=password)
+    if user is not None:
+        token = Token.objects.get(user_id=user)
+        return Response(token.key)
+    else :
+       return Response('Incorrect username or password')

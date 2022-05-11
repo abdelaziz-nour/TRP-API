@@ -13,7 +13,7 @@ class Donation(models.Model):
     donor = models.ForeignKey(User, related_name='donation', on_delete=models.CASCADE)
     student = models.ForeignKey(Student, related_name='donation', on_delete=models.CASCADE)
     donation_amount = models.IntegerField()
-    donation_time=models.DateTimeField('%Y-%m-%d ||%H:%M:%S',auto_now=True,)
+    donation_time=models.DateTimeField(auto_now=True,)
     def __str__(self,):
         return str(self.id)
 
